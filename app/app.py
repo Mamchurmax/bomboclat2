@@ -1,0 +1,22 @@
+from flask import Flask
+from app.extensions import db, migrate
+from app.controllers.listing_controller import listing_bp
+from app.controllers.amenity_controller import amenity_bp
+from app.controllers.user_controller import user_bp
+
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object('app.config.Config')
+
+    db.init_app(app)
+    migrate.init_app(app, db)
+
+    app.register_blueprint(listing_bp)
+    app.register_blueprint(amenity_bp)
+    app.register_blueprint(user_bp)
+
+    return app
+
+if __name__ == '__main__':
+    app = create_app()
+    app.run(debug=True)

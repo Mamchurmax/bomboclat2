@@ -1,0 +1,35 @@
+[tool]
+name = "airbnb-flask-app"
+version = "0.1.0"
+description = "A Flask application for managing Airbnb listings, amenities, and users."
+authors = ["Your Name <your.email@example.com>"]
+license = "MIT"
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+dependencies = [
+    "Flask",
+    "Flask-SQLAlchemy",
+    "Flask-Migrate",
+    "Flask-RESTful",
+    "Flask-JWT-Extended",
+    "marshmallow",
+    "marshmallow-sqlalchemy",
+    "python-dotenv"
+]
+
+[tool.black]
+line-length = 88
+target-version = ["py310"]
+include = '\.pyi?$'
+exclude = '''
+/(
+    .git
+    __pycache__
+    build
+    dist
+)/
+'''
