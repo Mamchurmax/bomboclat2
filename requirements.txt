@@ -8,3 +8,4 @@ pytest
 pytest-flask
 marshmallow
 marshmallow-sqlalchemy
+flasgger

@@ -1,22 +1,34 @@
 from flask import Flask
 from app.extensions import db, migrate
-from app.controllers.listing_controller import listing_bp
-from app.controllers.amenity_controller import amenity_bp
-from app.controllers.user_controller import user_bp
+from app.controllers import register_controllers
+
 
 def create_app():
-    app = Flask(__name__)
-    app.config.from_object('app.config.Config')
+    application = Flask(__name__)
+    application.config.from_object('app.config.Config')
 
-    db.init_app(app)
-    migrate.init_app(app, db)
+    db.init_app(application)
+    migrate.init_app(application, db)
 
-    app.register_blueprint(listing_bp)
-    app.register_blueprint(amenity_bp)
-    app.register_blueprint(user_bp)
+    # Import all models so Alembic sees them
+    import app.models  # noqa: F401
 
-    return app
+    # Register blueprints
+    register_controllers(application)
+
+    # Swagger
+    from flasgger import Swagger
+    Swagger(application, template={
+        "info": {
+            "title": "Airbnb Flask API",
+            "description": "REST API for Airbnb-like application",
+            "version": "1.0.0",
+        }
+    })
+
+    return application
+
 
 if __name__ == '__main__':
-    app = create_app()
-    app.run(debug=True)
+    flask_app = create_app()
+    flask_app.run(debug=True)

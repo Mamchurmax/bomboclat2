@@ -1,28 +1,40 @@
+from app.extensions import db
+from app.models.user import User
+
+
 class UserRepository:
-    """A minimal in-memory user repository used to satisfy imports during app startup.
+    """Database-backed user repository using SQLAlchemy."""
 
-    This is intentionally simple: it stores user objects in a dict keyed by id and
-    provides the methods used by `UserService`. It's a temporary, low-risk shim so
-    the app can import modules and run; replace with a real DB-backed repository
-    when wiring persistence.
-    """
-    def __init__(self):
-        self._data = {}
-        self._next_id = 1
+    def save(self, user_obj):
+        """Create or update a user. Accepts a SimpleNamespace or User instance."""
+        if isinstance(user_obj, User):
+            db.session.add(user_obj)
+            db.session.commit()
+            return user_obj
 
-    def save(self, user):
-        # Assign an id if missing (simulate auto-increment)
-        if getattr(user, 'id', None) is None:
-            user.id = self._next_id
-            self._next_id += 1
-        self._data[user.id] = user
+        # Build a User model from a namespace / dict-like object
+        user = User(
+            username=getattr(user_obj, 'username', None),
+            email=getattr(user_obj, 'email', ''),
+            password_hash=getattr(user_obj, 'password_hash', ''),
+        )
+        db.session.add(user)
+        db.session.commit()
         return user
 
     def find_by_id(self, user_id):
-        return self._data.get(user_id)
+        return db.session.get(User, user_id)
 
     def find_all(self):
-        return list(self._data.values())
+        return User.query.all()
+
+    def find_by_username(self, username):
+        return User.query.filter_by(username=username).first()
 
     def delete(self, user_id):
-        return self._data.pop(user_id, None)
+        user = self.find_by_id(user_id)
+        if user:
+            db.session.delete(user)
+            db.session.commit()
+            return user
+        return None
