@@ -43,4 +43,5 @@ def create_app():
         """
         return "Hello, this is a simple text response!"
 
-    return application
+    return application 
+    
