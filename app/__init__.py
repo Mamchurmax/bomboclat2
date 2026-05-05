@@ -30,18 +30,4 @@ def create_app():
     }
     Swagger(application, template=swagger_template)
 
-    @application.route('/hello')
-    def hello():
-        """
-        A simple hello world endpoint
-        ---
-        tags:
-          - Miscellaneous
-        responses:
-          200:
-            description: A greeting message
-        """
-        return "Hello, this is a simple text response!"
-
-    return application 
     

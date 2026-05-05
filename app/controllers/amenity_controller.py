@@ -24,8 +24,6 @@ def get_amenities():
             properties:
               id:
                 type: integer
-              name:
-                type: string
     """
     amenities = amenity_service.get_all_amenities()
     result = [{"id": getattr(a, 'id', None), "name": getattr(a, 'name', None)} for a in amenities]
