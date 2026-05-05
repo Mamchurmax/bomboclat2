@@ -1,0 +1,25 @@
+me: Deploy to EC2
+
+on:
+    push:
+          branches:
+                  - main
+
+          jobs:
+              deploy:
+                    runs-on: ubuntu-latest
+                        steps:
+                                - name: SSH and deploy
+                                        uses: appleboy/ssh-action@v1.0.0
+                                                with:
+                                                            host: ${{ secrets.EC2_HOST }}
+                                                                      username: ${{ secrets.EC2_USER }}
+                                                                                key: ${{ secrets.EC2_KEY }}
+                                                                                          script: |
+                                                                                                        cd ~/data-base
+                                                                                                                    git pull origin main
+                                                                                                                                docker build -t myapp .
+                                                                                                                                            docker stop myapp || true
+                                                                                                                                                        docker rm myapp || true
+                                                                                                                                                                    docker run -d --name myapp --restart always -p 8000:8000 myapp
+                                                                                          
